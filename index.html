@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahameru E-Commerce - Storefront</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f6f9; }
+        .header { background-color: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        .loading { text-align: center; font-size: 18px; color: #555; margin: 50px 0; }
+        
+        /* Grid Produk */
+        .grid-produk { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .card-produk { background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
+        .card-produk:hover { transform: translateY(-5px); }
+        .foto-produk { width: 100%; height: 200px; object-fit: cover; background-color: #eaeded; }
+        .detail-produk { padding: 15px; }
+        .nama-produk { font-size: 16px; font-weight: bold; margin: 0 0 10px 0; color: #333; }
+        .harga-produk { font-size: 18px; color: #e74c3c; font-weight: bold; margin: 0 0 15px 0; }
+        .btn-beli { background-color: #27ae60; color: white; border: none; width: 100%; padding: 10px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .btn-beli:hover { background-color: #219653; }
+    </style>
+</head>
+<body>
+
+<div class="header">🏪 KOPERASI MERAH PUTIH — STOREFRONT</div>
+
+<div class="container">
+    <div id="loader" class="loading">Sedang mengambil data produk dari Google Sheets...</div>
+    <div class="grid-produk" id="areaProduk"></div>
+</div>
+
+<script>
+    // 1. MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzVDAHSMBnyIuPJZdgc3sQzrUcWNHPhu1Ru96grfBLKgG5kaxZ_pviJbEcGuQOOU5B5/exec"; 
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Tembak API dengan action getStorefront
+        fetch(`${WEB_APP_URL}?action=getStorefront`)
+        .then(response => response.json())
+        .then(res => {
+            document.getElementById("loader").style.display = "none";
+            
+            if (res.status === "success" && res.produk) {
+                const areaProduk = document.getElementById("areaProduk");
+                let htmlCard = "";
+                
+                // Ambil data array produk
+                const listProduk = res.produk;
+                
+                if(listProduk.length === 0 || (listProduk.ok === false)) {
+                    areaProduk.innerHTML = "<p style='text-align:center; width:100%;'>Belum ada data produk aktif atau akses database terkendala.</p>";
+                    return;
+                }
+
+                // Loop data produk dari Google Sheets
+                // Sesuaikan property (prod.NAMA, prod.HARGA) dengan nama kolom di objek/sheet Anda
+                listProduk.forEach(prod => {
+                    // Cek properti objek (ganti prod.NAMA/prod.HARGA jika di objek Anda menggunakan huruf kecil seperti prod.nama)
+                    let nama = prod.NAMA || prod.nama || prod.NAMA_PRODUK || "Produk Tanpa Nama";
+                    let harga = prod.HARGA || prod.harga || 0;
+                    let foto = prod.FOTO || prod.foto || "https://via.placeholder.com/220x200?text=No+Image";
+
+                    htmlCard += `
+                        <div class="card-produk">
+                            <img src="${foto}" class="foto-produk" alt="${nama}">
+                            <div class="detail-produk">
+                                <div class="nama-produk">${nama}</div>
+                                <div class="harga-produk">Rp ${Number(harga).toLocaleString('id-ID')}</div>
+                                <button class="btn-beli" onclick="alert('Membeli ${nama}')">Tambah ke Keranjang</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                areaProduk.innerHTML = htmlCard;
+            } else {
+                document.getElementById("loader").innerText = "Gagal memuat: " + (res.message || "Struktur data salah.");
+            }
+        })
+        .catch(err => {
+            document.getElementById("loader").innerText = "Koneksi terputus atau backend belum siap.";
+            console.error(err);
+        });
+    });
+</script>
+
+</body>
+</html>
