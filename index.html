@@ -718,8 +718,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 // ══════════════════════════════════════════════════════════
 //  STATE & SESSION
 // ══════════════════════════════════════════════════════════
-// ⚠️ GANTI dengan URL exec hasil deploy Code.gs
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3zC3l7vecHvZ44DhGBcF3q-_XksSoiYbJVVa9Zxz_Ddh8ZhLOWbCOv2ruzu52x6cp/exec";
+// ⚠️ GANTI dengan URL exec hasil deploy Code.gs)
+const SCRIPT_URL = "https://script.google.com/macros/s/GANTI_DENGAN_ID_DEPLOYMENT/exec";
 var _SCRIPT_URL = SCRIPT_URL; // dipertahankan supaya kode lama yang masih merujuk _SCRIPT_URL tetap jalan
 
 // ── Pembungkus fetch API (GET, publik/read-only) ──
@@ -808,7 +808,15 @@ function addToCart(produk, qty, satuanOverride){
   saveCart(c);
   showToast('✅ '+produk.NAMA_PRODUK+(namaSatuan?' ('+namaSatuan+')':'')+' ditambahkan ke keranjang');
 }
-function removeFromCart(id){ var c=getCart().filter(function(i){ return i.id!==id; }); saveCart(c); renderKeranjang(); }
+function removeFromCart(id){
+  var c=getCart().filter(function(i){ return i.id!==id; }); saveCart(c);
+  // Voucher bisa jadi tidak lagi berlaku setelah komposisi keranjang berubah
+  // (mis. syarat minimal belanja) -- lepas dulu, biar dihitung ulang bersih.
+  _voucherApplied=null;
+  try{ sessionStorage.removeItem(VOUCHER_KEY); }catch(e){}
+  renderVoucherZone();
+  renderKeranjang();
+}
 function updateQtyCart(id, delta){
   var c=getCart();
   var idx=c.findIndex(function(i){ return i.id===id; });
@@ -1561,13 +1569,13 @@ function renderVoucherZone(){
         '<div class="mv-nilai">'+_esc(_memberVoucher.NAMA||'Voucher Anda')+'</div></div>'+
       '<button onclick="gunakanVoucherMember()">Gunakan</button>'+
     '</div>';
-  } else if(!CUST_TOKEN){
+  } else {
+    // Input manual -- berlaku untuk TAMU maupun MEMBER yang login tapi
+    // belum punya voucher yang di-assign otomatis.
     el.innerHTML='<div class="promo-input-row">'+
       '<input type="text" id="inputKodeVoucher" placeholder="Punya kode voucher?" autocomplete="off" name="svoucher_mm">'+
       '<button onclick="terapkanVoucher()" id="btnTerapkanVoucher">Pakai</button>'+
     '</div>';
-  } else {
-    el.innerHTML='';
   }
 }
 
