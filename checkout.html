@@ -208,7 +208,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 
 <script>
 // ⚠️ GANTI dengan URL exec hasil deploy Code.gs
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3zC3l7vecHvZ44DhGBcF3q-_XksSoiYbJVVa9Zxz_Ddh8ZhLOWbCOv2ruzu52x6cp/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/GANTI_DENGAN_ID_DEPLOYMENT/exec";
 
 // Halaman ini murni statis di GitHub Pages (bukan dirender GAS), jadi
 // window.location.search normal apa adanya -- tidak perlu trik SERVER_PARAMS
@@ -406,13 +406,13 @@ function renderVoucherZone(){
         '<div class="mv-nilai">'+_esc(_memberVoucher.NAMA||'Voucher Anda')+'</div></div>'+
       '<button onclick="gunakanVoucherMember()">Gunakan</button>'+
     '</div>';
-  } else if(!CUST_TOKEN){
+  } else {
+    // Input manual -- berlaku untuk TAMU maupun MEMBER yang login tapi
+    // belum punya voucher yang di-assign otomatis.
     el.innerHTML='<div class="promo-input-row">'+
       '<input type="text" id="inputKodeVoucher" placeholder="Punya kode voucher?" autocomplete="off" name="fvoucher_mm">'+
       '<button onclick="terapkanVoucher()" id="btnTerapkanVoucher">Pakai</button>'+
     '</div>';
-  } else {
-    el.innerHTML='';
   }
 }
 
