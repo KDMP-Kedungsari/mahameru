@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Dashboard — MahaMeru E-Commerce</title>
+<style>
+:root{
+  --h:#1565c0;--ht:#0d47a1;--hm:#e3f2fd;
+  --putih:#fff;--abu:#6b7280;--abu2:#374151;
+  --bg:#f0f4ff;--shad:0 2px 14px rgba(21,101,192,.10);--r:14px;
+  --orange:#e65100;--g:#16a34a;--amber:#d97706;--red:#dc2626;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;padding-bottom:36px;}
+
+/* ── TOPBAR ── */
+.topbar{background:linear-gradient(135deg,#0d47a1,#1565c0 60%,#e65100);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(0,0,0,.18);}
+.tb-brand{display:flex;align-items:center;gap:9px;}
+.tb-ico{width:36px;height:36px;background:rgba(255,255,255,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.tb-name{color:#fff;font-size:13px;font-weight:900;line-height:1.2;}
+.tb-sub{color:rgba(255,255,255,.6);font-size:10px;}
+.tb-right{display:flex;align-items:center;gap:6px;}
+.btn-logout{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:9px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(150deg,#0d47a1 0%,#1565c0 50%,#e65100 100%);padding:16px 16px 56px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05);top:-60px;right:-50px;}
+.hero::after{content:'';position:absolute;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-30px;left:10px;}
+.hero-greet{color:rgba(255,255,255,.7);font-size:11px;margin-bottom:2px;}
+.hero-nama{color:#fff;font-size:20px;font-weight:900;letter-spacing:-.01em;word-break:break-word;}
+.hero-row{display:flex;align-items:center;justify-content:space-between;margin-top:7px;flex-wrap:wrap;gap:6px;}
+.hero-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 11px;color:#fff;font-size:11px;font-weight:700;}
+.hero-date{color:rgba(255,255,255,.6);font-size:11px;margin-top:4px;}
+
+/* ── STATS FLOAT ── */
+.stats-float{margin:-38px 14px 0;position:relative;z-index:10;}
+.stats-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.stats-title{font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3);display:flex;align-items:center;gap:5px;}
+.btn-refresh{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px);transition:background .2s;}
+.btn-refresh.loading{opacity:.7;cursor:not-allowed;pointer-events:none;}
+.btn-refresh.loading .r-ico{animation:spin .7s linear infinite;}
+
+/* ── STAT CARDS — 2x3 ── */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.stat-card{background:var(--putih);border-radius:14px;padding:13px 11px;box-shadow:0 4px 20px rgba(0,0,0,.10);display:flex;align-items:center;gap:10px;transition:transform .15s;}
+.stat-card:active{transform:scale(.97);}
+.sc-ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;}
+.sc-info{min-width:0;}
+.sc-val{font-size:19px;font-weight:900;color:var(--abu2);line-height:1;transition:all .3s;}
+.sc-lbl{font-size:10px;color:var(--abu);font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:.04em;}
+.sc-val.counting{color:var(--h);}
+.sc-skel{display:inline-block;width:54px;height:20px;background:linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%);background-size:200% 100%;border-radius:5px;animation:shimmer 1.2s infinite;}
+
+/* ── OMZET WIDE CARD ── */
+.omzet-card{background:linear-gradient(135deg,#0d47a1,#1565c0);border-radius:14px;padding:14px 16px;box-shadow:0 4px 20px rgba(13,71,161,.3);display:flex;align-items:center;justify-content:space-between;margin:8px 0 0;}
+.omzet-left .o-lbl{color:rgba(255,255,255,.7);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.omzet-left .o-val{color:#fff;font-size:22px;font-weight:900;margin-top:2px;letter-spacing:-.01em;}
+.omzet-left .o-sub{color:rgba(255,255,255,.55);font-size:10px;margin-top:2px;}
+.omzet-ico{font-size:36px;opacity:.8;}
+
+/* ── SECTION HEADER ── */
+.sec-wrap{padding:18px 14px 0;}
+.sec-head{font-size:11px;font-weight:800;color:var(--abu);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.sec-head::after{content:'';flex:1;height:1px;background:#e5e7eb;}
+
+/* ── MENU GRID ── */
+.menu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 14px;}
+.menu-btn{background:var(--putih);border-radius:13px;padding:12px 4px 10px;text-align:center;border:none;cursor:pointer;box-shadow:var(--shad);transition:transform .15s,box-shadow .15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;}
+.menu-btn:active{transform:scale(.91);box-shadow:none;}
+.menu-ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;margin-bottom:4px;}
+.menu-lbl{font-size:10px;font-weight:700;color:var(--abu2);line-height:1.25;text-align:center;width:100%;padding:0 3px;word-wrap:break-word;}
+
+/* ── Warna icon (dipertahankan dari RDK, + tambahan) ── */
+.mc-blue   {background:linear-gradient(135deg,#dbeafe,#93c5fd);}
+.mc-green  {background:linear-gradient(135deg,#dcfce7,#86efac);}
+.mc-yellow {background:linear-gradient(135deg,#fef9c3,#fde047);}
+.mc-purple {background:linear-gradient(135deg,#f3e8ff,#d8b4fe);}
+.mc-orange {background:linear-gradient(135deg,#ffedd5,#fdba74);}
+.mc-teal   {background:linear-gradient(135deg,#ccfbf1,#5eead4);}
+.mc-gray   {background:linear-gradient(135deg,#f3f4f6,#d1d5db);}
+.mc-pink   {background:linear-gradient(135deg,#fce7f3,#f9a8d4);}
+.mc-indigo {background:linear-gradient(135deg,#e0e7ff,#a5b4fc);}
+.mc-red    {background:linear-gradient(135deg,#fee2e2,#fca5a5);}
+.mc-cyan   {background:linear-gradient(135deg,#e0f2fe,#7dd3fc);}
+.mc-lime   {background:linear-gradient(135deg,#ecfccb,#bef264);}
+.mc-ember  {background:linear-gradient(135deg,#fff7ed,#fed7aa);}
+.mc-rose   {background:linear-gradient(135deg,#fff1f2,#fecdd3);}
+
+/* ── PESANAN TERBARU ── */
+.pesanan-list{padding:0 14px;}
+.pesanan-item{background:var(--putih);border-radius:13px;padding:13px 14px;box-shadow:var(--shad);display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.pi-left{min-width:0;}
+.pi-id{font-size:11px;font-weight:800;color:var(--h);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pi-nama{font-size:12px;font-weight:600;color:var(--abu2);margin-bottom:2px;}
+.pi-tgl{font-size:10px;color:var(--abu);}
+.pi-right{text-align:right;flex-shrink:0;}
+.pi-total{font-size:13px;font-weight:900;color:var(--abu2);}
+.pi-status{display:inline-block;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;margin-top:3px;}
+.ps-menunggu_bayar{background:#fef3c7;color:#d97706;}
+.ps-dibayar       {background:#dbeafe;color:#1d4ed8;}
+.ps-diproses      {background:#f3e8ff;color:#7c3aed;}
+.ps-dikirim       {background:#ccfbf1;color:#0d9488;}
+.ps-selesai       {background:#dcfce7;color:#15803d;}
+.ps-dibatalkan    {background:#fee2e2;color:#dc2626;}
+
+/* ── NOTIF BADGE ── */
+.notif-badge{background:#dc2626;color:#fff;border-radius:20px;font-size:9px;font-weight:800;padding:2px 6px;margin-left:4px;vertical-align:top;display:none;}
+.notif-badge.show{display:inline-block;}
+
+/* ── STOK ALERT ── */
+.stok-alert{background:#fff7ed;border:1.5px solid #fed7aa;border-radius:13px;padding:12px 14px;margin:0 14px;display:none;}
+.stok-alert.show{display:block;}
+.stok-alert-title{font-size:12px;font-weight:800;color:#c2410c;margin-bottom:6px;}
+.stok-item{font-size:11px;color:#9a3412;padding:3px 0;border-bottom:1px solid #ffedd5;}
+.stok-item:last-child{border-bottom:none;}
+
+/* ── INFO CARD ── */
+.info-card{background:var(--putih);border-radius:var(--r);padding:12px 14px;box-shadow:var(--shad);margin:0 14px;}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f3f4f6;font-size:12px;}
+.info-row:last-child{border-bottom:none;}
+.info-lbl{color:var(--abu);font-weight:600;}
+.info-val{color:var(--abu2);font-weight:700;text-align:right;max-width:60%;}
+
+/* ── MODAL LOGOUT ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:flex-end;justify-content:center;}
+.modal-bg.show{display:flex;}
+.modal-box{background:#fff;border-radius:22px 22px 0 0;padding:26px 20px 34px;width:100%;max-width:480px;animation:slideUp .3s ease;}
+.modal-ico{text-align:center;font-size:46px;margin-bottom:8px;}
+.modal-title{text-align:center;font-size:16px;font-weight:800;color:var(--abu2);margin-bottom:4px;}
+.modal-sub{text-align:center;font-size:13px;color:var(--abu);margin-bottom:20px;line-height:1.5;}
+.modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-batal{padding:13px;background:#f3f4f6;border:none;border-radius:13px;font-size:14px;font-weight:700;color:var(--abu2);cursor:pointer;}
+.btn-keluar{padding:13px;background:linear-gradient(135deg,#dc2626,#ef4444);border:none;border-radius:13px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(220,38,38,.3);}
+
+/* ── LOADING OVERLAY ── */
+.ld-ov{position:fixed;inset:0;background:rgba(255,255,255,.88);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:9998;gap:14px;}
+.ld-spin{width:42px;height:42px;border:4px solid var(--hm);border-top-color:var(--h);border-radius:50%;animation:spin .8s linear infinite;}
+.ld-txt{font-size:13px;color:var(--h);font-weight:700;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e293b;color:#fff;border-radius:20px;padding:10px 18px;font-size:12px;font-weight:700;z-index:9997;transition:transform .3s ease,opacity .3s;opacity:0;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+.footer{text-align:center;padding:22px 14px 6px;font-size:11px;color:var(--abu);line-height:1.6;}
+.footer strong{color:var(--h);}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-ico">🛍️</div>
+    <div>
+      <div class="tb-name">MahaMeru</div>
+      <div class="tb-sub">E-Commerce Admin Panel</div>
+    </div>
+  </div>
+  <div class="tb-right">
+    <button class="btn-logout" onclick="showLogout()">⏻ Keluar</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-greet" id="heroGreet">Selamat datang,</div>
+  <div class="hero-nama" id="heroNama">—</div>
+  <div class="hero-row">
+    <div class="hero-badge" id="heroBadge">👤 —</div>
+  </div>
+  <div class="hero-date" id="heroDate"></div>
+</div>
+
+<!-- STATS FLOAT -->
+<div class="stats-float">
+  <div class="stats-hdr">
+    <div class="stats-title">📊 Statistik Toko</div>
+    <button class="btn-refresh" id="btnRefresh" onclick="loadStats()">
+      <span class="r-ico" id="rIco">🔄</span>
+      <span id="rTxt">Muat Data</span>
+    </button>
+  </div>
+
+  <!-- Omzet wide card -->
+  <div class="omzet-card">
+    <div class="omzet-left">
+      <div class="o-lbl">💰 Total Omzet (Selesai)</div>
+      <div class="o-val" id="sOmzet">—</div>
+      <div class="o-sub">Hari ini: <span id="sOmzetHari">—</span></div>
+    </div>
+    <div class="omzet-ico">💰</div>
+  </div>
+
+  <!-- Grid 2x3 -->
+  <div class="stats-grid" style="margin-top:8px;">
+    <div class="stat-card">
+      <div class="sc-ico mc-orange">🛒</div>
+      <div class="sc-info"><div class="sc-val" id="sPesananHari">—</div><div class="sc-lbl">Pesanan Hari Ini</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-ico mc-yellow">⏳</div>
+      <div class="sc-info"><div class="sc-val" id="sMenunggu">—</div><div class="sc-lbl">Menunggu Bayar</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-ico mc-purple">⚙️</div>
+      <div class="sc-info"><div class="sc-val" id="sDiproses">—</div><div class="sc-lbl">Diproses</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-ico mc-blue">📦</div>
+      <div class="sc-info"><div class="sc-val" id="sTotalPesanan">—</div><div class="sc-lbl">Total Pesanan</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-ico mc-green">🏪</div>
+      <div class="sc-info"><div class="sc-val" id="sProdukAktif">—</div><div class="sc-lbl">Produk Aktif</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-ico mc-teal">👥</div>
+      <div class="sc-info"><div class="sc-val" id="sCustAktif">—</div><div class="sc-lbl">Member Aktif</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- STOK HABIS ALERT -->
+<div class="sec-wrap" id="secStokAlert" style="display:none;">
+  <div class="stok-alert show" id="stokAlertBox">
+    <div class="stok-alert-title">⚠️ Stok Hampir Habis!</div>
+    <div id="stokAlertList"></div>
+  </div>
+</div>
+
+<!-- MENU TRANSAKSI -->
+<div class="sec-wrap" id="secTransaksi">
+  <div class="sec-head">🛒 Transaksi</div>
+</div>
+<div class="menu-grid" id="gridTransaksi">
+  <button class="menu-btn" onclick="go('maintainPesanan')" id="bPesanan">
+    <div class="menu-ico mc-orange">📋</div>
+    <div class="menu-lbl">Kelola Pesanan<span class="notif-badge" id="badgePesanan">0</span></div>
+  </button>
+  <button class="menu-btn" onclick="go('konfirmasiBayar')" id="bKonfirmasi">
+    <div class="menu-ico mc-green">✅</div>
+    <div class="menu-lbl">Konfirmasi Bayar<span class="notif-badge" id="badgeBayar">0</span></div>
+  </button>
+  <button class="menu-btn" onclick="go('kasir')" id="bKasir">
+    <div class="menu-ico mc-purple">🖥️</div>
+    <div class="menu-lbl">Kasir POS</div>
+  </button>
+  <button class="menu-btn" onclick="go('checkout')" id="bCheckout">
+    <div class="menu-ico mc-yellow">🛍️</div>
+    <div class="menu-lbl">Checkout</div>
+  </button>
+  <button class="menu-btn" onclick="go('orderStatus')" id="bOrderStatus">
+    <div class="menu-ico mc-teal">📦</div>
+    <div class="menu-lbl">Status Pesanan</div>
+  </button>
+  <button class="menu-btn" onclick="go('laporanPenjualan')" id="bLaporan">
+    <div class="menu-ico mc-blue">📊</div>
+    <div class="menu-lbl">Laporan Penjualan</div>
+  </button>
+  <button class="menu-btn" onclick="go('storefront')" id="bToko">
+    <div class="menu-ico mc-cyan">🏪</div>
+    <div class="menu-lbl">Lihat Toko</div>
+  </button>
+  <button class="menu-btn" onclick="go('maintainChat')" id="maintainChat">
+    <div class="menu-ico mc-indigo">💬</div>
+    <div class="menu-lbl">Kelola Chat<span class="notif-badge" id="badgeChat">0</span></div>
+  </button>
+  <button class="menu-btn" onclick="go('maintainRetur')" id="maintainRetur">
+    <div class="menu-ico mc-indigo">↩️</div>
+    <div class="menu-lbl">Kelola Retur</div>
+  </button>
+  <button class="menu-btn" onclick="go('laporanRetur')" id="laporanRetur">
+    <div class="menu-ico mc-indigo">📊</div>
+    <div class="menu-lbl">Laporan Retur</div>
+  </button>
+  <button class="menu-btn" onclick="go('laporanProfit')" id="laporanProfit">
+    <div class="menu-ico mc-indigo">💰</div>
+    <div class="menu-lbl">Laporan Profit</div>
+  </button>
+</div>
+
+<!-- MENU KATALOG -->
+<div class="sec-wrap" id="secKatalog">
+  <div class="sec-head">🏷️ Katalog</div>
+</div>
+<div class="menu-grid" id="gridKatalog">
+  <button class="menu-btn" onclick="go('maintainProduk')" id="bProduk">
+    <div class="menu-ico mc-purple">📦</div>
+    <div class="menu-lbl">Kelola Produk</div>
+  </button>
+  <button class="menu-btn" onclick="go('maintainKategori')" id="bKategori">
+    <div class="menu-ico mc-orange">🏷️</div>
+    <div class="menu-lbl">Kelola Kategori</div>
+  </button>
+  <button class="menu-btn" onclick="go('maintainStok')" id="bStok">
+    <div class="menu-ico mc-lime">📊</div>
+    <div class="menu-lbl">Kelola Stok</div>
+  </button>
+  <button class="menu-btn" onclick="go('laporanStok')" id="bLapStok">
+    <div class="menu-ico mc-ember">📉</div>
+    <div class="menu-lbl">Laporan Stok</div>
+  </button>
+  <button class="menu-btn" onclick="go('maintainPO')" id="maintainPO">
+    <div class="menu-ico mc-indigo">📦</div>
+    <div class="menu-lbl">Kelola PO</div>
+  </button>
+  <button class="menu-btn" onclick="go('maintainCustomer')" id="bCustomer">
+    <div class="menu-ico mc-cyan">👥</div>
+    <div class="menu-lbl">Data Member</div>
+  </button>
+  <button class="menu-btn" onclick="go('laporanPenjualan')" id="bLap2">
+    <div class="menu-ico mc-green">📈</div>
+    <div class="menu-lbl">Analitik</div>
+  </button>
+  <button class="menu-btn" onclick="go('maintainPromo')" id="bPromo">
+    <div class="menu-ico mc-pink">🎁</div>
+    <div class="menu-lbl">Promo</div>
+  </button>
+  <button class="menu-btn" onclick="go('maintainBanner')" id="maintainBanner">
+    <div class="menu-ico mc-pink">🖼️</div>
+    <div class="menu-lbl">Banner</div>
+  </button>
+  <button class="menu-btn" onclick="go('maintainVoucher')" id="maintainVoucher">
+    <div class="menu-ico mc-pink">🎟️</div>
+    <div class="menu-lbl">Voucher</div>
+  </button>
+</div>
+
+<!-- MENU PENGATURAN -->
+<div class="sec-wrap" id="secPengaturan">
+  <div class="sec-head">⚙️ Pengaturan</div>
+</div>
+<div class="menu-grid" id="gridPengaturan">
+  <button class="menu-btn" onclick="go('admin')" id="bAdmin">
+    <div class="menu-ico mc-indigo">👑</div>
+    <div class="menu-lbl">Kelola Admin</div>
+  </button>
+  <button class="menu-btn" onclick="go('ubahPassword')" id="bUbahPw">
+    <div class="menu-ico mc-gray">🔑</div>
+    <div class="menu-lbl">Ubah Password</div>
+  </button>
+  <button class="menu-btn" onclick="showToast('Fitur segera hadir')" id="bAudit">
+    <div class="menu-ico mc-yellow">📜</div>
+    <div class="menu-lbl">Audit Log</div>
+  </button>
+  <!-- TOMBOL GAIB — hanya muncul saat klik logo 5x -->
+  <button class="menu-btn" onclick="showToast('Fitur segera hadir')" id="bGaib" style="display:none;">
+    <div class="menu-ico mc-red">🔧</div>
+    <div class="menu-lbl">Dev Tools</div>
+  </button>
+</div>
+
+<!-- PESANAN TERBARU -->
+<div class="sec-wrap" id="secTerbaru">
+  <div class="sec-head">🕐 Pesanan Terbaru</div>
+</div>
+<div class="pesanan-list" id="listPesananTerbaru">
+  <div style="text-align:center;padding:20px;color:#9ca3af;font-size:12px;">Klik "Muat Data" untuk memuat pesanan terbaru</div>
+</div>
+
+<!-- INFO SISTEM -->
+<div class="sec-wrap">
+  <div class="sec-head">ℹ️ Info Sistem</div>
+</div>
+<div class="info-card">
+  <div class="info-row"><span class="info-lbl">Versi Sistem</span><span class="info-val">MahaMeru v1.0</span></div>
+  <div class="info-row"><span class="info-lbl">Role Anda</span><span class="info-val" id="sRole">—</span></div>
+  <div class="info-row"><span class="info-lbl">Hak Akses</span><span class="info-val" id="sHak" style="font-size:10px;">—</span></div>
+  <div class="info-row"><span class="info-lbl">Sesi Berakhir</span><span class="info-val" id="sExpire">—</span></div>
+  <div class="info-row"><span class="info-lbl">Stok Habis</span><span class="info-val" id="sStokHabis">—</span></div>
+  <div class="info-row"><span class="info-lbl">Member Baru Hari Ini</span><span class="info-val" id="sCustBaru">—</span></div>
+</div>
+
+<div class="footer">© 2026 <strong>MahaMeru E-Commerce</strong><br>Powered by Google Apps Script</div>
+
+<!-- MODAL LOGOUT -->
+<div class="modal-bg" id="modalLogout">
+  <div class="modal-box">
+    <div class="modal-ico">👋</div>
+    <div class="modal-title">Keluar dari Sistem?</div>
+    <div class="modal-sub">Sesi Anda akan diakhiri dan Anda perlu login ulang untuk mengakses panel admin.</div>
+    <div class="modal-btns">
+      <button class="btn-batal" onclick="hideLogout()">Batal</button>
+      <button class="btn-keluar" onclick="doLogout()">Ya, Keluar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="ld-ov" id="ldOv">
+  <div class="ld-spin"></div>
+  <div class="ld-txt" id="ldTxt">Memuat…</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  SESSION — URL param ATAU sessionStorage (fallback)
+// ══════════════════════════════════════════════════════════
+// WAJIB baca dari server-side (__params) dulu -- konten web app GAS dirender
+// di dalam iframe (googleusercontent.com) yang location-nya TIDAK selalu
+// membawa query string asli, jadi window.location.search saja TIDAK
+// RELIABLE (kadang kebaca, kadang tidak -> inilah penyebab "kadang akses
+// ditolak, kadang balik ke login"). __params disuntikkan dari server lewat
+// scriptlet di bawah (lihat _render di Code.gs).
+var SERVER_PARAMS = <?!= __params ?>;
+function _p(k){
+  try{
+    if (SERVER_PARAMS && SERVER_PARAMS[k] !== undefined && SERVER_PARAMS[k] !== '') {
+      return SERVER_PARAMS[k];
+    }
+    return new URLSearchParams(window.location.search).get(k)||'';
+  }catch(e){ return ''; }
+}
+var TOKEN    = _p('token')    || sessionStorage.getItem('mm_token')    || '';
+var NAMA     = (function(){ try{ var v=_p('nama'); return v?decodeURIComponent(v):sessionStorage.getItem('mm_nama')||'Admin'; }catch(e){ return sessionStorage.getItem('mm_nama')||'Admin'; } })();
+var ROLE     = _p('role')     || sessionStorage.getItem('mm_role')     || '';
+var HAK      = _p('hak')      || sessionStorage.getItem('mm_hak')      || '';
+var EXPIRE   = Number(_p('expire') || sessionStorage.getItem('mm_expire') || '0');
+var USERNAME = _p('username') || sessionStorage.getItem('mm_username') || '';
+
+if(_p('token')){
+  sessionStorage.setItem('mm_token',   TOKEN);
+  sessionStorage.setItem('mm_nama',    NAMA);
+  sessionStorage.setItem('mm_role',    ROLE);
+  sessionStorage.setItem('mm_hak',     HAK);
+  sessionStorage.setItem('mm_expire',  String(EXPIRE));
+  sessionStorage.setItem('mm_username',USERNAME);
+}
+
+// ══════════════════════════════════════════════════════════
+//  🔒 SATPAM LAPIS KEDUA: VALIDASI AKSES
+// ══════════════════════════════════════════════════════════
+(function(){
+  if(!TOKEN){
+    google.script.run.withSuccessHandler(function(u){ window.top.location.href=u+'?page=login'; }).getScriptUrl();
+    throw new Error('no token');
+  }
+  // Superadmin & role valid — lanjut
+  var validRoles = ['superadmin','manajer','admin','kasir'];
+  if(!validRoles.includes(ROLE.toLowerCase())){
+    document.body.innerHTML=[
+      '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;background:#f0f4ff;font-family:Segoe UI,sans-serif;">',
+        '<div style="background:#fff;border-radius:22px;padding:36px;max-width:380px;width:100%;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.08);">',
+          '<div style="font-size:56px;margin-bottom:15px;">⛔</div>',
+          '<div style="font-size:18px;font-weight:800;color:#dc2626;margin-bottom:10px;">Akses Ditolak</div>',
+          '<p style="color:#6b7280;font-size:13px;margin-bottom:24px;line-height:1.5;">Role Anda tidak memiliki akses ke panel Admin.</p>',
+          '<button id="_btn" style="width:100%;padding:13px;background:linear-gradient(135deg,#0d47a1,#1565c0);color:#fff;border:none;border-radius:13px;font-size:14px;font-weight:800;cursor:pointer;">← Kembali ke Login</button>',
+        '</div>',
+      '</div>'
+    ].join('');
+    document.getElementById('_btn').addEventListener('click',function(){
+      google.script.run.withSuccessHandler(function(u){ window.top.location.href=u+'?page=login'; }).getScriptUrl();
+    });
+    throw new Error('Akses ditolak');
+  }
+})();
+
+// ══════════════════════════════════════════════════════════
+//  HAK AKSES — helper
+// ══════════════════════════════════════════════════════════
+function hasHak(h){
+  if(ROLE.toLowerCase()==='superadmin') return true;
+  var haks=HAK.toLowerCase().split(',').map(function(x){ return x.trim(); });
+  return haks.includes(h.toLowerCase()) || haks.includes('semua');
+}
+function hideBtn(el){
+  if(el){ el.style.display='none'; }
+}
+function hideSection(secId, gridId){
+  var grid=document.getElementById(gridId);
+  if(!grid) return;
+  var btns=grid.querySelectorAll('.menu-btn');
+  var allHidden=true;
+  btns.forEach(function(b){ if(b.style.display!=='none') allHidden=false; });
+  if(allHidden){
+    var sec=document.getElementById(secId);
+    if(sec) sec.style.display='none';
+    grid.style.display='none';
+  }
+}
+
+// Sembunyikan tombol berdasarkan hak akses
+(function(){
+  // ── TRANSAKSI ──
+  if(!hasHak('kelola_pesanan')   && !hasHak('proses_pesanan'))   hideBtn(document.getElementById('bPesanan'));
+  if(!hasHak('konfirmasi_bayar') && !hasHak('kelola_pesanan'))   hideBtn(document.getElementById('bKonfirmasi'));
+  if(!hasHak('kasir')            && !hasHak('kelola_pesanan'))   hideBtn(document.getElementById('bKasir'));
+  if(!hasHak('checkout')         && !hasHak('kelola_pesanan'))   hideBtn(document.getElementById('bCheckout'));
+  if(!hasHak('lihat_pesanan')    && !hasHak('kelola_pesanan'))   hideBtn(document.getElementById('bOrderStatus'));
+  if(!hasHak('lap_penjualan')    && !hasHak('lihat_lap'))        hideBtn(document.getElementById('bLaporan'));
+  if(!hasHak('lap_profit')       && !hasHak('lap_profit'))       hideBtn(document.getElementById('laporanProfit'));
+  hideSection('secTransaksi','gridTransaksi');
+
+  // ── KATALOG ──
+  if(!hasHak('kelola_produk')    && !hasHak('lihat_produk'))     hideBtn(document.getElementById('bProduk'));
+  if(!hasHak('kelola_produk')    && !hasHak('lihat_produk'))     hideBtn(document.getElementById('bKategori'));
+  if(!hasHak('kelola_produk')    && !hasHak('kelola_stok'))      hideBtn(document.getElementById('bStok'));
+  if(!hasHak('lap_stok')         && !hasHak('lihat_lap'))        hideBtn(document.getElementById('bLapStok'));
+  if(!hasHak('kelola_po')        && !hasHak('kelola_po'))        hideBtn(document.getElementById('maintainPO'));
+  if(!hasHak('kelola_customer')  && !hasHak('lihat_customer'))   hideBtn(document.getElementById('bCustomer'));
+  if(!hasHak('lap_penjualan')    && !hasHak('lihat_lap'))        hideBtn(document.getElementById('bLap2'));
+  if(!hasHak('kelola_promo')     && !hasHak('kelola_promo'))     hideBtn(document.getElementById('bPromo'));
+  if(!hasHak('kelola_promo')     && !hasHak('kelola_promo'))     hideBtn(document.getElementById('maintainBanner'));
+  if(!hasHak('kelola_voucher')   && !hasHak('kelola_voucher'))   hideBtn(document.getElementById('maintainVoucher'));
+  if(!hasHak('kelola_chat')      && !hasHak('kelola_chat'))      hideBtn(document.getElementById('maintainChat'));
+  if(!hasHak('kelola_retur')     && !hasHak('kelola_retur'))     hideBtn(document.getElementById('maintainRetur'));
+  if(!hasHak('laporan_retur')    && !hasHak('laporan_retur'))    hideBtn(document.getElementById('laporanRetur'));
+  hideSection('secKatalog','gridKatalog');
+
+  // ── PENGATURAN ──
+  if(ROLE.toLowerCase()!=='superadmin') hideBtn(document.getElementById('bAdmin'));
+  hideSection('secPengaturan','gridPengaturan');
+})();
+
+// ══════════════════════════════════════════════════════════
+//  HERO — isi nama, role, tanggal
+// ══════════════════════════════════════════════════════════
+(function(){
+  var now=new Date();
+  var jam=now.getHours();
+  var greet=jam<11?'Selamat Pagi,':jam<15?'Selamat Siang,':jam<18?'Selamat Sore,':'Selamat Malam,';
+  document.getElementById('heroGreet').textContent=greet;
+  document.getElementById('heroNama').textContent=NAMA;
+
+  var roleLabel={superadmin:'👑 Superadmin',manajer:'📊 Manajer',admin:'⚙️ Admin',kasir:'💳 Kasir'};
+  document.getElementById('heroBadge').textContent=roleLabel[ROLE.toLowerCase()]||('👤 '+ROLE);
+
+  var hari=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  var bln=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  document.getElementById('heroDate').textContent=hari[now.getDay()]+', '+now.getDate()+' '+bln[now.getMonth()]+' '+now.getFullYear();
+
+  document.getElementById('sRole').textContent=ROLE||'—';
+  document.getElementById('sHak').textContent=HAK||'semua';
+  if(EXPIRE){
+    var d=new Date(EXPIRE);
+    document.getElementById('sExpire').textContent=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+  }
+})();
+
+// ══════════════════════════════════════════════════════════
+//  🔑 TOMBOL GAIB — klik logo topbar 5x
+//  (dipertahankan dari RDK)
+// ══════════════════════════════════════════════════════════
+var _gaibCount=0, _gaibTimer=null;
+document.querySelector('.tb-ico').addEventListener('click',function(){
+  _gaibCount++;
+  clearTimeout(_gaibTimer);
+  _gaibTimer=setTimeout(function(){ _gaibCount=0; },2000);
+  if(_gaibCount>=5){
+    _gaibCount=0;
+    var btn=document.getElementById('bGaib');
+    var visible=btn.style.display!=='none';
+    btn.style.display=visible?'none':'flex';
+    // Pastikan section Pengaturan tidak tersembunyi
+    document.getElementById('secPengaturan').style.display='';
+    document.getElementById('gridPengaturan').style.display='grid';
+    showToast(visible?'🔒 Dev Tools disembunyikan':'🔓 Dev Tools aktif!');
+  }
+});
+
+// ══════════════════════════════════════════════════════════
+//  LOAD STATS
+// ══════════════════════════════════════════════════════════
+var _statsLoaded=false;
+
+function setRefreshState(loading){
+  var btn=document.getElementById('btnRefresh');
+  var ico=document.getElementById('rIco');
+  var txt=document.getElementById('rTxt');
+  btn.classList.toggle('loading',loading);
+  ico.textContent='🔄';
+  txt.textContent=loading?'Memuat…':(_statsLoaded?'Refresh':'Muat Data');
+}
+
+function setStatsLoading(){
+  var ids=['sPesananHari','sMenunggu','sDiproses','sTotalPesanan','sProdukAktif','sCustAktif'];
+  ids.forEach(function(id){
+    document.getElementById(id).innerHTML='<span class="sc-skel"></span>';
+  });
+  document.getElementById('sOmzet').textContent='Memuat…';
+  document.getElementById('sOmzetHari').textContent='—';
+}
+
+function animateCount(el,target,dur){
+  if(isNaN(target)||target===0){ el.textContent='0'; return; }
+  var start=0,startTime=null;
+  function step(ts){
+    if(!startTime) startTime=ts;
+    var prog=Math.min((ts-startTime)/dur,1);
+    var eased=prog===1?1:1-Math.pow(2,-10*prog);
+    var cur=Math.round(eased*target);
+    el.textContent=cur.toLocaleString('id-ID');
+    if(prog<1) requestAnimationFrame(step);
+    else{ el.textContent=target.toLocaleString('id-ID'); el.classList.remove('counting'); }
+  }
+  el.classList.add('counting');
+  requestAnimationFrame(step);
+}
+
+function loadStats(){
+  setRefreshState(true);
+  setStatsLoading();
+  google.script.run
+    .withSuccessHandler(function(r){
+      setRefreshState(false);
+      if(!r.ok){ showToast('⚠️ ' + (r.msg||'Gagal memuat data')); return; }
+      _statsLoaded=true;
+
+      // Omzet
+      document.getElementById('sOmzet').textContent    = r.omzetFmt||'Rp 0';
+      document.getElementById('sOmzetHari').textContent= r.omzetHariFmt||'Rp 0';
+
+      // Animasi count
+      var mapping=[
+        ['sPesananHari', r.pesananHariIni||0],
+        ['sMenunggu',    r.pesananMenunggu||0],
+        ['sDiproses',    r.pesananDiproses||0],
+        ['sTotalPesanan',r.totalPesanan||0],
+        ['sProdukAktif', r.produkAktif||0],
+        ['sCustAktif',   r.customerAktif||0],
+      ];
+      mapping.forEach(function(m,i){
+        setTimeout(function(){ animateCount(document.getElementById(m[0]),Number(m[1]),900); }, i*80);
+      });
+
+      // Info
+      document.getElementById('sStokHabis').textContent = (r.stokHabis||0)+' produk';
+      document.getElementById('sCustBaru').textContent  = (r.customerBaru||0)+' member';
+
+      // Badge notif
+      if(r.pesananMenunggu>0){
+        var b=document.getElementById('badgePesanan');
+        b.textContent=r.pesananMenunggu; b.classList.add('show');
+      }
+      if(r.pesananDiproses>0){
+        var b2=document.getElementById('badgeBayar');
+        b2.textContent=r.pesananDiproses; b2.classList.add('show');
+      }
+      if(r.chatBelumDibaca>0){
+        var b3=document.getElementById('badgeChat');
+        b3.textContent=r.chatBelumDibaca>9?'9+':r.chatBelumDibaca; b3.classList.add('show');
+      }
+
+      // Stok alert
+      if(r.stokHabis>0){
+        document.getElementById('secStokAlert').style.display='';
+      }
+
+      // Pesanan terbaru
+      renderPesananTerbaru(r.pesananTerbaru||[]);
+
+      showToast('✅ Data diperbarui');
+    })
+    .withFailureHandler(function(e){
+      setRefreshState(false);
+      showToast('⚠️ '+e.message);
+    })
+    .getDashboardStats(TOKEN);
+}
+
+function renderPesananTerbaru(list){
+  var el=document.getElementById('listPesananTerbaru');
+  if(!list||!list.length){
+    el.innerHTML='<div style="text-align:center;padding:20px;color:#9ca3af;font-size:12px;">Belum ada pesanan</div>';
+    return;
+  }
+  el.innerHTML=list.map(function(p){
+    var st=String(p.STATUS_PESANAN||'').toLowerCase().replace(/ /g,'_');
+    var stLabel={
+      menunggu_bayar:'Menunggu Bayar',dibayar:'Sudah Dibayar',
+      diproses:'Diproses',dikirim:'Dikirim',selesai:'Selesai',dibatalkan:'Dibatalkan'
+    }[st]||st;
+    return '<div class="pesanan-item" onclick="go(\'maintainPesanan\')" style="cursor:pointer;">'
+      +'<div class="pi-left">'
+        +'<div class="pi-id">'+p.ID_PESANAN+'</div>'
+        +'<div class="pi-nama">'+p.NAMA_PEMESAN+'</div>'
+        +'<div class="pi-tgl">'+String(p.TGL_PESANAN||'').substring(0,16)+'</div>'
+      +'</div>'
+      +'<div class="pi-right">'
+        +'<div class="pi-total">'+p.TOTAL_FMT+'</div>'
+        +'<div class="pi-status ps-'+st+'">'+stLabel+'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+//  NAVIGASI
+// ══════════════════════════════════════════════════════════
+var _SCRIPT_URL='';
+google.script.run.withSuccessHandler(function(u){ _SCRIPT_URL=u; }).getScriptUrl();
+
+function go(page){
+  showLoading('Membuka halaman…');
+
+  // Halaman yang sudah dimigrasi ke GitHub Pages -- redirect langsung ke sana
+  // (bukan lagi ke sistem lama), tetap bawa info sesi admin di URL.
+  // CATATAN: maintainChat SENGAJA tidak dimasukkan ke sini lagi -- versi
+  // GitHub Pages-nya bermasalah ("Akses Ditolak") dan sulit dipastikan
+  // penyebabnya, sementara versi Apps Script (dengan fix __params) sudah
+  // terbukti jalan sama seperti kasirPOS.html. Jadi "Kelola Chat" balik ke
+  // jalur Apps Script biasa di bawah.
+  var MIGRATED_PAGES = {
+    storefront:   'https://adasemua.github.io/semuaada/index.html'
+  };
+  if(MIGRATED_PAGES[page]){
+    var pAdm=new URLSearchParams({
+      token:TOKEN, nama:encodeURIComponent(NAMA),
+      role:ROLE, hak:HAK, expire:String(EXPIRE), username:USERNAME
+    });
+    window.top.location.href = MIGRATED_PAGES[page]+'?'+pAdm.toString();
+    return;
+  }
+
+  google.script.run.withSuccessHandler(function(url){
+    var p=new URLSearchParams({
+      page:page, token:TOKEN,
+      nama:encodeURIComponent(NAMA),
+      role:ROLE, hak:HAK,
+      expire:String(EXPIRE), username:USERNAME,
+      src:'dashboard'
+    });
+    window.top.location.href=url+'?'+p.toString();
+  }).getScriptUrl();
+}
+
+// ══════════════════════════════════════════════════════════
+//  LOGOUT
+// ══════════════════════════════════════════════════════════
+function showLogout(){ document.getElementById('modalLogout').classList.add('show'); }
+function hideLogout(){ document.getElementById('modalLogout').classList.remove('show'); }
+function doLogout(){
+  hideLogout();
+  sessionStorage.clear();
+  showLoading('Keluar…');
+  try{ google.script.run.logoutAdmin(TOKEN); }catch(e){}
+  window.top.location.href='https://adasemua.github.io/semuaada/login.html';
+}
+function goLogin(){
+  sessionStorage.clear();
+  window.top.location.href='https://adasemua.github.io/semuaada/login.html';
+}
+
+// ══════════════════════════════════════════════════════════
+//  CEK SESI BERKALA
+// ══════════════════════════════════════════════════════════
+setInterval(function(){
+  if(EXPIRE && Date.now()>EXPIRE){ alert('Sesi Anda telah berakhir. Silakan login kembali.'); goLogin(); }
+},60000);
+
+// ══════════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════════
+function showLoading(txt){
+  document.getElementById('ldOv').style.display='flex';
+  if(txt) document.getElementById('ldTxt').textContent=txt;
+}
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); },2800);
+}
+
+// Auto-inisialisasi
+setRefreshState(false);
+</script>
+</body>
+</html>
